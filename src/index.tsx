@@ -28,6 +28,10 @@ const App = () => {
       bundle: true,
       write: false,
       plugins: [unpkgPathPlugin()],
+      define: {
+        'process.env.NODE_ENV': '"production"', // Whenever we find an occurrence of process.env.NODE_ENV in the code, replace it with the str 'production',
+        global: 'window', // Certain modules may not work with the 'global' keyword (also, Webpack does this automatically)
+      },
     });
 
     // console.log(result);
