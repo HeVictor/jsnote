@@ -15,7 +15,7 @@ const html = `
               eval(event.data);
             } catch (err) {
               const root = document.querySelector('#root');
-              root.innerHTML = '<div style="color: red;"><h4>Runtime Error</h4>' + err + '</div>'
+              root.innerHTML = '<div style="color: red;"><h4>Runtime Error</h4>' + err + '</div>';
               console.error(err);
             }
           }, false);
