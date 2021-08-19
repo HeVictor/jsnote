@@ -1,3 +1,4 @@
+import './preview.css';
 import { useRef, useEffect } from 'react';
 
 interface PreviewProps {
@@ -29,16 +30,23 @@ const Preview: React.FC<PreviewProps> = ({ code }) => {
 
   useEffect(() => {
     iframe.current.srcdoc = html;
-    iframe.current.contentWindow.postMessage(code, '*');
+
+    // Necessary because the iframe takes a short while to register an event listener,
+    // so delaying posting the message ensures that the current rendered iframe can process the event
+    setTimeout(() => {
+      iframe.current.contentWindow.postMessage(code, '*');
+    }, 50);
   }, [code]);
 
   return (
-    <iframe
-      title="preview"
-      ref={iframe}
-      sandbox="allow-scripts"
-      srcDoc={html}
-    />
+    <div className="preview-wrapper">
+      <iframe
+        title="preview"
+        ref={iframe}
+        sandbox="allow-scripts"
+        srcDoc={html}
+      />
+    </div>
   );
 };
 
