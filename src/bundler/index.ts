@@ -21,6 +21,8 @@ const bundle = async (rawCode: string) => {
         'process.env.NODE_ENV': '"production"', // Whenever we find an occurrence of process.env.NODE_ENV in the code, replace it with the str 'production',
         global: 'window', // Certain modules may not work with the 'global' keyword (also, Webpack does this automatically)
       },
+      jsxFactory: '_React.createElement',
+      jsxFragment: '_React.Fragment',
     });
 
     return {
