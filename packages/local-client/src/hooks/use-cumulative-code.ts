@@ -12,7 +12,7 @@ export const useCumulativeCode = (cellId: string) => {
       const root = document.querySelector('#root');
 
       if (typeof value === 'object') {
-        if (value.$$typeof && value.props) {
+        if (_React.isValidElement(value)) {
           _ReactDOM.render(value, root);
         } else {
           root.innerHTML = JSON.stringify(value);
