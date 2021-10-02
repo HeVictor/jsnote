@@ -1,9 +1,9 @@
 import './cell-list.css';
 import { Fragment, useEffect } from 'react';
-import { useTypedSelector } from '../hooks/use-typed-selector';
-import CellListItem from './cell-list-item';
-import AddCell from './add-cell';
-import { useActions } from '../hooks/use-actions';
+import { useTypedSelector } from '../../hooks/use-typed-selector';
+import CellListItem from '../cell-list-item';
+import AddCell from '../add-cell';
+import { useActions } from '../../hooks/use-actions';
 
 const CellList: React.FC = () => {
   const { fetchCells } = useActions();
