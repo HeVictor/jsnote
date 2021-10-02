@@ -1,7 +1,9 @@
-export const defaultCellsContent = [
+import { Cell } from '../interfaces/models';
+
+export const defaultCellsContent: Cell[] = [
   {
     content:
-      '# JSNote\n\nThis is an interactive coding and documentation environment. Write some JavaScript, see it executed, and also write comprehensive documentation using markdown.\n- Add new cells by hovering on the divider between the cells.\n- Cells can be re-ordered and deleted through the button at the top-right.\n- Click within any text cell (like this one) to enter edit mode. Click away to see the full markdown in action.\n- The code in all the code editor cells are shared sequentially as if in one file. Variables defined in higher cells will be visible to the following cells.\n- Call the built-in `show` function to display any React component or printable JavaScript objects in the preview window. Call it multiple times to show multiple values.\n\nJSNote will load any existing content and save the changes you make to the file you opened the application with (by default it is saved to `notebook.json`). ',
+      '# JSNote\n\nThis is an interactive coding and documentation environment. Write some JavaScript, see it executed, and also write comprehensive documentation using markdown.\n- Add new cells by hovering on the divider between the cells.\n- Cells can be re-ordered and deleted through the button at the top-right.\n- Click within any text cell (like this one) to enter edit mode. Click away to see the full markdown in action.\n- The code in all the code editor cells are shared sequentially as if in one file. Variables defined in higher cells will be visible to the following cells.\n- Call the built-in `show` function to display any React component or printable JavaScript objects in the preview window.\n\nJSNote will load any existing content and save the changes you make to the file you opened the application with (by default it is saved to `notebook.js`). ',
     type: 'text',
     id: 'j2omw',
   },
