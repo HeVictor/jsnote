@@ -10,7 +10,7 @@ const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
   let resizableProps: ResizableBoxProps;
   const [innerHeight, setInnerHeight] = useState(window.innerHeight);
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
-  const [initialWidth, setInitialWidth] = useState(window.innerWidth * 0.75);
+  const [width, setWidth] = useState(window.innerWidth * 0.75);
 
   useEffect(() => {
     let timer: any;
@@ -25,8 +25,8 @@ const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
 
         // Max width constraint logic here is necessary as ResizableBox's maxConstraints props only
         // respects drag events on the resizeHandle itself, but not browser window resizes
-        if (window.innerWidth * 0.75 < initialWidth) {
-          setInitialWidth(window.innerWidth * 0.75);
+        if (window.innerWidth * 0.75 < width) {
+          setWidth(window.innerWidth * 0.75);
         }
       }, 100);
     };
@@ -35,7 +35,7 @@ const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
     return () => {
       window.removeEventListener('resize', listener);
     };
-  }, [initialWidth]);
+  }, [width]);
 
   if (direction === 'horizontal') {
     resizableProps = {
@@ -43,8 +43,11 @@ const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
       minConstraints: [innerWidth * 0.2, Infinity],
       maxConstraints: [innerWidth * 0.75, Infinity],
       height: Infinity,
-      width: initialWidth,
+      width,
       resizeHandles: ['e'],
+      onResizeStop: (_event, data) => {
+        setWidth(data.size.width);
+      },
     };
   } else {
     resizableProps = {

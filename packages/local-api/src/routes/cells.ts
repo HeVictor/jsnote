@@ -1,13 +1,12 @@
 import express from 'express';
 import fs from 'fs/promises';
 import path from 'path';
+import { Cell } from '../interfaces/models';
+import {
+  convertToJSFileFormat,
+  convertToCellsFormat,
+} from '../cells-converter/converter';
 import { defaultCellsContent } from '../consts/defaultContent';
-
-interface Cell {
-  id: string;
-  content: string;
-  type: 'text' | 'code';
-}
 
 export const createCellsRouter = (filename: string, dir: string) => {
   const router = express.Router();
@@ -15,17 +14,16 @@ export const createCellsRouter = (filename: string, dir: string) => {
 
   const fullPath = path.join(dir, filename);
 
-  router.get('/cells', async (req, res) => {
+  router.get('/cells', async (_req, res) => {
     try {
       // Read the file
       const result = await fs.readFile(fullPath, { encoding: 'utf-8' });
-
-      res.send(JSON.parse(result));
+      res.send(convertToCellsFormat(result));
     } catch (err) {
       if (err.code === 'ENOENT') {
         await fs.writeFile(
           fullPath,
-          JSON.stringify(defaultCellsContent),
+          convertToJSFileFormat(defaultCellsContent),
           'utf-8'
         );
         res.send(defaultCellsContent);
@@ -41,7 +39,7 @@ export const createCellsRouter = (filename: string, dir: string) => {
     const { cells }: { cells: Cell[] } = req.body;
 
     // Write the cells into the file
-    await fs.writeFile(fullPath, JSON.stringify(cells), 'utf-8');
+    await fs.writeFile(fullPath, convertToJSFileFormat(cells), 'utf-8');
 
     res.send({ status: 'ok' });
   });
