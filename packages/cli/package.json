@@ -1,6 +1,6 @@
 {
   "name": "debaser-jsnote",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "",
   "bin": "dist/index.js",
   "publishConfig": {
