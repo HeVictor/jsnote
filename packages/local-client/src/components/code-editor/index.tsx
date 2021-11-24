@@ -1,11 +1,13 @@
 import './code-editor.css';
 import './syntax.css';
 import { useRef } from 'react';
-import MonacoEditor, { EditorDidMount } from '@monaco-editor/react';
+import Editor, { OnMount } from '@monaco-editor/react';
 import prettier from 'prettier';
 import parser from 'prettier/parser-babel';
 import codeShift from 'jscodeshift';
 import Highlighter from 'monaco-jsx-highlighter';
+import { parse } from '@babel/parser';
+import traverse from '@babel/traverse';
 
 interface CodeEditorProps {
   initialValue: string;
@@ -15,26 +17,60 @@ interface CodeEditorProps {
 const CodeEditor: React.FC<CodeEditorProps> = ({ onChange, initialValue }) => {
   const editorRef = useRef<any>();
 
-  const onEditorDidMount: EditorDidMount = (getValue, monacoEditor) => {
-    editorRef.current = monacoEditor;
-    monacoEditor.onDidChangeModelContent(() => {
-      onChange(getValue());
+  const onEditorDidMount: OnMount = (editor, monaco) => {
+    editorRef.current = editor;
+    editor.onDidChangeModelContent(() => {
+      onChange(editor.getValue());
     });
 
-    monacoEditor.getModel()?.updateOptions({ tabSize: 2 });
+    editor.getModel()?.updateOptions({ tabSize: 2 });
 
-    const highlighter = new Highlighter(
-      // @ts-ignore
-      window.monaco,
-      codeShift,
-      monacoEditor
-    );
-    highlighter.highLightOnDidChangeModelContent(
-      () => {},
-      () => {},
-      undefined,
-      () => {}
-    );
+    // Minimal Babel setup for React JSX parsing:
+    const babelParse = (code: string) =>
+      parse(code, {
+        sourceType: 'module',
+        plugins: ['jsx'],
+      });
+
+    const highlighter = new Highlighter(monaco, babelParse, traverse, editor);
+    highlighter.highLightOnDidChangeModelContent(100);
+    highlighter.addJSXCommentCommand();
+
+    monaco.languages.registerCompletionItemProvider('html', {
+      triggerCharacters: ['>'],
+      provideCompletionItems: (model, position) => {
+        const codePre: string = model.getValueInRange({
+          startLineNumber: position.lineNumber,
+          startColumn: 1,
+          endLineNumber: position.lineNumber,
+          endColumn: position.column,
+        });
+
+        const tag = codePre.match(/.*<(\w+)>$/)?.[1];
+
+        if (!tag) {
+          return;
+        }
+
+        const word = model.getWordUntilPosition(position);
+
+        return {
+          suggestions: [
+            {
+              label: `</${tag}>`,
+              kind: monaco.languages.CompletionItemKind.EnumMember,
+              insertText: `</${tag}>`,
+              range: {
+                startLineNumber: position.lineNumber,
+                endLineNumber: position.lineNumber,
+                startColumn: word.startColumn,
+                endColumn: word.endColumn,
+              },
+            },
+          ],
+        };
+      },
+    });
   };
 
   const onFormatClick = () => {
@@ -64,10 +100,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange, initialValue }) => {
       >
         Format
       </button>
-      <MonacoEditor
-        editorDidMount={onEditorDidMount}
+      <Editor
+        onMount={onEditorDidMount}
         value={initialValue}
-        theme="dark"
+        theme="vs-dark"
         language="javascript"
         height="100%"
         options={{
