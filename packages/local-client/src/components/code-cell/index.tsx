@@ -37,8 +37,8 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
   const convertLineNumbersToHeight = (lineNums: number) => {
     const codeLinesHeight = (initialLineNumbers || 0) * FONT_TO_PX_CONV_RATE;
 
-    const minHeight = 250;
-    const maxHeight = 400;
+    const minHeight = 10 * FONT_TO_PX_CONV_RATE;
+    const maxHeight = 15 * FONT_TO_PX_CONV_RATE;
 
     return Math.min(Math.max(codeLinesHeight, minHeight), maxHeight);
   };
