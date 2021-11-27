@@ -4,9 +4,14 @@ import { ResizableBox, ResizableBoxProps } from 'react-resizable';
 
 interface ResizableProps {
   direction: 'horizontal' | 'vertical';
+  initialVerticalHeight?: number;
 }
 
-const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
+const Resizable: React.FC<ResizableProps> = ({
+  direction,
+  initialVerticalHeight,
+  children,
+}) => {
   let resizableProps: ResizableBoxProps;
   const [innerHeight, setInnerHeight] = useState(window.innerHeight);
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
@@ -53,7 +58,7 @@ const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
     resizableProps = {
       minConstraints: [Infinity, 24],
       maxConstraints: [Infinity, innerHeight * 0.9],
-      height: 300,
+      height: initialVerticalHeight || 300,
       width: Infinity,
       resizeHandles: ['s'],
     };
