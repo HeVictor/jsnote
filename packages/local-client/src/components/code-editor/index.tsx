@@ -6,22 +6,33 @@ import prettier from 'prettier';
 import parser from 'prettier/parser-babel';
 import codeShift from 'jscodeshift';
 import Highlighter from 'monaco-jsx-highlighter';
+import { FONT_SIZE } from '../code-cell/editorConsts';
 
 interface CodeEditorProps {
   initialValue: string;
-  onChange(value: string): void;
+  onCodeChange(value: string): void;
+  setInitialLineNumbers(lineNumbers: number | undefined): void;
 }
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ onChange, initialValue }) => {
+const CodeEditor: React.FC<CodeEditorProps> = ({
+  onCodeChange,
+  setInitialLineNumbers,
+  initialValue,
+}) => {
   const editorRef = useRef<any>();
 
   const onEditorDidMount: EditorDidMount = (getValue, monacoEditor) => {
     editorRef.current = monacoEditor;
+
+    const model = monacoEditor.getModel();
+
+    setInitialLineNumbers(model?.getLineCount());
+
     monacoEditor.onDidChangeModelContent(() => {
-      onChange(getValue());
+      onCodeChange(getValue());
     });
 
-    monacoEditor.getModel()?.updateOptions({ tabSize: 2 });
+    model?.updateOptions({ tabSize: 2 });
 
     const highlighter = new Highlighter(
       // @ts-ignore
@@ -76,7 +87,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange, initialValue }) => {
           showUnused: false,
           folding: false,
           lineNumbersMinChars: 3,
-          fontSize: 16,
+          fontSize: FONT_SIZE,
           scrollBeyondLastLine: false,
           automaticLayout: true,
         }}

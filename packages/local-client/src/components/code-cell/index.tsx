@@ -1,5 +1,5 @@
 import './code-cell.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import CodeEditor from '../code-editor';
 import Preview from '../preview';
 import Resizable from '../resizable';
@@ -7,6 +7,7 @@ import { Cell } from '../../state';
 import { useActions } from '../../hooks/use-actions';
 import { useTypedSelector } from '../../hooks/use-typed-selector';
 import { useCumulativeCode } from '../../hooks/use-cumulative-code';
+import { FONT_TO_PX_CONV_RATE } from './editorConsts';
 
 interface CodeCellProps {
   cell: Cell;
@@ -33,8 +34,26 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cumulativeCode, cell.id, createBundle]);
 
+  const convertLineNumbersToHeight = (lineNums: number) => {
+    const codeLinesHeight = (initialLineNumbers || 0) * FONT_TO_PX_CONV_RATE;
+
+    const minHeight = 250;
+    const maxHeight = 400;
+
+    return Math.min(Math.max(codeLinesHeight, minHeight), maxHeight);
+  };
+
+  const [initialLineNumbers, setInitialLineNumbers] = useState<
+    number | undefined
+  >(0);
+
   return (
-    <Resizable direction="vertical">
+    <Resizable
+      direction="vertical"
+      initialVerticalHeight={convertLineNumbersToHeight(
+        initialLineNumbers || 0
+      )}
+    >
       <div
         style={{
           height: 'calc(100% - 10px)',
@@ -45,7 +64,8 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
         <Resizable direction="horizontal">
           <CodeEditor
             initialValue={cell.content}
-            onChange={(value) => updateCell(cell.id, value)}
+            onCodeChange={(value) => updateCell(cell.id, value)}
+            setInitialLineNumbers={(value) => setInitialLineNumbers(value)}
           />
         </Resizable>
         {!bundle || bundle.loading ? (
