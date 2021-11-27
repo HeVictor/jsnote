@@ -1,6 +1,6 @@
 {
   "name": "debaser-jsnote",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "",
   "bin": "dist/index.js",
   "publishConfig": {
@@ -17,10 +17,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@debaser-jsnote/local-client": "^1.5.0"
+    "@debaser-jsnote/local-client": "^1.5.1"
   },
   "devDependencies": {
-    "@debaser-jsnote/local-api": "^1.5.0",
+    "@debaser-jsnote/local-api": "^1.5.1",
     "@types/node": "^16.7.1",
     "commander": "^8.1.0",
     "esbuild": "0.8.26",
